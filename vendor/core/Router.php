@@ -6,6 +6,9 @@
  * Date: 16.11.2017
  * Time: 15:37
  */
+
+namespace vendor\core;
+
 class Router
 {
 	protected static $routes = [];
@@ -38,6 +41,7 @@ class Router
 				if (!isset($route['action'])) {
 					$route['action'] = 'index';
 				}
+				$route['controller'] = self::upperCamelCase($route['controller']);
 				self::$route = $route;
 				
 				return true;
@@ -49,15 +53,16 @@ class Router
 	
 	public static function dispatch($url)
 	{
+		$url = self::removeQueryString($url);
 		if (self::matchRoute($url)) {
-			$controller = self::upperCamelCase(self::$route['controller']);
+			$controller = 'app\controllers\\' . self::upperCamelCase(self::$route['controller']);
 			
 			if (class_exists($controller)) {
-				$cObj = new $controller;
+				$cObj = new $controller(self::$route);
 				$action = self::lowerCamelCase(self::$route['action']) . 'Action';
-				debug($action);
 				if (method_exists($cObj, $action)) {
 					$cObj->$action();
+					$cObj->getView();
 				} else {
 					echo 'Action not found';
 				}
@@ -82,5 +87,18 @@ class Router
 	protected static function lowerCamelCase($name)
 	{
 		return lcfirst(self::upperCamelCase($name));
+	}
+	
+	protected static function removeQueryString($url)
+	{
+		if ($url) {
+			$params = explode('&', $url, 2);
+			if (strpos($params[0], '=') === false) {
+				return rtrim($params[0], '/');
+			} else {
+				return '';
+			}
+		}
+		return $url;
 	}
 }

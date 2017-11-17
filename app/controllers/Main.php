@@ -6,10 +6,20 @@
  * Date: 16.11.2017
  * Time: 17:40
  */
-class Main
+
+namespace app\controllers;
+
+use vendor\core\base\Controller;
+
+class Main extends App
 {
+	//public $layout = 'main';
+	
 	public function indexAction()
 	{
-		echo '213123';
+		//$this->layout = false;
+		//$this->view = 'test';
+		$name = 'asdasd';
+		$this->set(['name' => $name]);
 	}
 }
