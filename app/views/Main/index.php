@@ -1,2 +1,6 @@
 <h1>INDEX</h1>
-<?= $name ?>
+<?php if (!empty($users)): ?>
+	<?php foreach ($users as $user): ?>
+        <p><?= $user['territory'] ?></p>
+	<?php endforeach; ?>
+<?php endif; ?>
